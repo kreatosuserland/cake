@@ -17,8 +17,9 @@ proc runner(file: string, task: string) =
   else:
     echo "Task "&task&" ran successfully!"
 
-proc parser(file="cakefile", tasks=toSeq(["make"])) =
-  
+proc cake(file="cakefile", tasks=toSeq(["make"])) =
+  ## Simple to learn build tool
+
   try:
     dict = loadConfig(file)
   except Exception:
