@@ -3,3 +3,7 @@ Tasks = make install
 
 [make]
 execCmd="nim c -o=out/cake src/cake.nim"
+
+[install]
+Depends="make"
+execCmd="cp -f out/cake /usr/bin/cake"
