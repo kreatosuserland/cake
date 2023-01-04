@@ -1,11 +1,24 @@
 import os
 import strutils
 import parsecfg
+import sequtils
 
-proc parser(file="cakefile", tasks: seq[string]) =
+var dict: Config
+
+proc err(errString: string) =
+  ## Errors out.
+  echo errString
+  quit(1)
+
+proc runner(file: string, task: string) =
+  ## Runs a task.
+  if execShellCmd(dict.getSectionValue(task, "execCmd")) != 0:
+    err "Task "&task&" failed!"
+  else:
+    echo "Task "&task&" ran successfully!"
+
+proc parser(file="cakefile", tasks=toSeq(["make"])) =
   
-  var dict: Config
-
   try:
     dict = loadConfig(file)
   except Exception:
@@ -14,23 +27,20 @@ proc parser(file="cakefile", tasks: seq[string]) =
   
   let cakeTasks = dict.getSectionValue("Cake", "Tasks").split(" ")
   
-  if tasks.len == 0:
-    echo "Please enter a task"
-    echo "Available tasks: "&cakeTasks.join(",")
-
   for i in tasks:
     if i in cakeTasks:
       try:
         echo "Running task "&i
-        if execShellCmd(dict.getSectionValue(i, "execCmd")) != 0:
-          echo "Task "&i&" failed!"
-          quit(1)
-        else:
-          echo "Task "&i&" ran successfully!"
+        
+        if dict.getSectionValue(i, "Depends") != "":
+            echo "Running "&dict.getSectionValue(i, "Depends")&" as a dependency to "&i
+            runner(file=file, task=dict.getSectionValue(i, "Depends"))
+        
+        runner(file=file, task=i)
+
       except:
         echo "Task listed in Tasks but doesn't actually exist!"
         quit(1)
     else:
       echo i&" is not a task"
-      echo "Available tasks: "&cakeTasks.join(",")
-      quit(1)
+      err "Available tasks: "&cakeTasks.join(",")
