@@ -1,5 +1,5 @@
 <p align="left">
-<img src="https://github.com/kreatolinux/logo/blob/master/core.png"> 
+<img src="https://github.com/kreatolinux/logo/blob/master/core.png"  height="10%" width="10%"> 
 </p>
 
 # Cake
