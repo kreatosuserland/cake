@@ -1,4 +1,6 @@
 import cligen
 include modules/parser
 
-dispatch parser
+clCfg.version = "cake v0.3"
+
+dispatch cake
